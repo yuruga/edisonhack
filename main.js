@@ -14,19 +14,25 @@ var n = 0;
 //入力監視
 function loop() {
  if(pin6.read()){
-  if(!is_press){
-      console.log("hhhhh");
-      n++;
-      //car.setCarId(n);
-      m = car.getCarData();
-      console.log(car.events[0]);
-  }
-  is_press = true;
+      if(!is_press){
+          console.log("hhhhh");
+          n++;
+          //car.setCarId(n);
+          m = car.getCarData();
+
+
+      }
+      is_press = true;
+      
  }else{
   is_press = false;
  }
+if(car.event){
+      car.event.excute();
+      car.event = null;
+}
  //遅延実行
- setTimeout(loop, 100);
+ setTimeout(loop, 1000);
 }
 //初回実行
 loop();

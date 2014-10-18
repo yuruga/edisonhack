@@ -13,6 +13,8 @@ var API_KEY = "b47103a63f4c";
 //リクエスト対象のプロパティー
 var REQ_VEHICLE_PROPS = "[VehBehvr,VehCdn]"
 
+var FRIEND_IP = "http://192.168.50.19:58888"
+
 
 var CarService = function(searchRadius, monitoringRate){
 	//インスタンスプロパティ
@@ -20,8 +22,15 @@ var CarService = function(searchRadius, monitoringRate){
     this.startMonitor(monitoringRate || 3*1000);
     this.searchRadius = searchRadius || 300;
     
+    
+    //set dummy
+    if(os.hostname() == "Edison-MAEDA")
+    {
+        dummyid = "ITCJP_VID_020";
+    }
     //車プロフィール
-    this.carModel = new CarModel(os.hostname());
+    
+    this.carModel = new CarModel(dummyid);
     console.log(this.carModel.name)
     this.textProvider = new TextProvider(this.carModel.name, this.carModel.sex);
     
@@ -122,7 +131,7 @@ CarService.prototype = {
         if(this.myCarSituation["SysPwrSts"] != 2 && newSituation["SysPwrSts"] == 2)//if(newSituation["SysPwrSts"] == 2)
         {
             t = this.textProvider.greeting().selfIntro().build();
-            this.events.push(new CarEvent(t));
+            this.event=new CarEvent(t);
         }
         this.myCarSituation = newSituation;
     },
@@ -130,11 +139,60 @@ CarService.prototype = {
     //neaby cars
     _checkNearbyCarsSitualtion:function(nearbyCars)
     {
+        s = "";
+        newNearByCars = []
         for(var i in nearbyCars)
         {
             car = nearbyCars[i]
-            console.log(cae);
+            isNew = true;
+            for (var j in this.nearbyCars)
+            {
+                vid = this.nearbyCars[j]
+                if(car.vid == vid )
+                {
+                    isNew = false;
+                    break;
+                }
+            }
+            if(isNew)
+            {
+                targetId = car.vid;
+                targetName = new CarModel(targetId).name;//CarModel.createDummyModel(car.vid).name;
+                metCount = this.carModel.getMetCount(targetId);
+                t = this.textProvider.getGreeting(targetName, metCount).build();
+                console.log( "entered : "+targetId + "count : "+metCount);
+                this.event=new CarEvent(t,FRIEND_IP+"/hello/");
+                this.carModel.addMetCount(targetId);
+            }
+            newNearByCars.push(car.vid);
+            s+=car.vid+", ";
         }
+        
+        for (var k in this.nearbyCars)
+        {
+            
+            leaved = true;
+            oldVid = this.nearbyCars[k];
+            for (var l in newNearByCars)
+            {
+                if(oldVid == newNearByCars[l])
+                {
+                    leaved = false;
+                    break;
+                }
+            }
+            if(leaved == true)
+            {
+                targetVid = oldVid;
+                targetName = new CarModel(targetVid).name;//.createDummyModel(targetVid).name;
+                t = this.textProvider.getTextWithName("TARGET_NAME", targetName).getText("GOOD_BYE").build();
+                
+                console.log( "leaved : "+oldVid);
+                this.event = new CarEvent(t,FRIEND_IP+"/goodbye/");
+            }
+        }
+        console.log(s);
+        this.nearbyCars = newNearByCars;
         
     }
 };
