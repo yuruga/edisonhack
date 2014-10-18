@@ -111,11 +111,11 @@ VoiceService.prototype = {
 		};
 		request(options)
 			.on('error', function(e){
-				console.log("aaa", e);
+				console.log(e);
 			})
 			.pipe(fs.createWriteStream(path))
 			.on('error', function(e){
-				console.log("bbb", e);
+				console.log(e);
 			})
 			.on('close', function(){
 				if(callBack){
