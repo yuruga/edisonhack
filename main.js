@@ -17,11 +17,11 @@ var CarService = require('./libs/CarService')
  * main
  */
 
-//var v = new voice();
-//v.setText("あいうえお");
-//v.getAndWriteData("/tmp/sample.wav", function(path){
-//	console.log("hoge", path);
-//});
+/*var v = new voice();
+v.setText("あいうえお");
+v.getAndWriteData("/tmp/sample.wav", function(path){
+	console.log("hoge", path);
+});*/
 
 //pin指定
 var pin6 = new mraa.Gpio(6);

@@ -1,8 +1,6 @@
-var DDD = {id:"hoe"};
 //コンストラクタ
 var CarModel = function(name, sex){
 	//インスタンスプロパティ
-    console.log(name)
 	this.name = DUMMY_DATA_MAP[name]["name"] || "no_name";
     this.sex = DUMMY_DATA_MAP[name]["sex"] || 0;
     this.spec = null;

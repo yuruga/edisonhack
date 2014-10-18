@@ -13,7 +13,7 @@ var API_KEY = "b47103a63f4c";
 //リクエスト対象のプロパティー
 var REQ_VEHICLE_PROPS = "[VehBehvr,VehCdn]"
 
-var FRIEND_IP = "http://192.168.50.19:58888"
+var FRIEND_IP = "http://192.168.50.37:8080"
 
 
 var CarService = function(searchRadius, monitoringRate){
@@ -31,7 +31,6 @@ var CarService = function(searchRadius, monitoringRate){
     //車プロフィール
     
     this.carModel = new CarModel(dummyid);
-    console.log(this.carModel.name)
     this.textProvider = new TextProvider(this.carModel.name, this.carModel.sex);
     
     //イベントプール
@@ -161,7 +160,7 @@ CarService.prototype = {
                 metCount = this.carModel.getMetCount(targetId);
                 t = this.textProvider.getGreeting(targetName, metCount).build();
                 console.log( "entered : "+targetId + "count : "+metCount);
-                this.event=new CarEvent(t,FRIEND_IP+"/hello/");
+                this.event=new CarEvent(t,FRIEND_IP+"/read");
                 this.carModel.addMetCount(targetId);
             }
             newNearByCars.push(car.vid);
@@ -188,7 +187,7 @@ CarService.prototype = {
                 t = this.textProvider.getTextWithName("TARGET_NAME", targetName).getText("GOOD_BYE").build();
                 
                 console.log( "leaved : "+oldVid);
-                this.event = new CarEvent(t,FRIEND_IP+"/goodbye/");
+                this.event = new CarEvent(t,FRIEND_IP+"/read");
             }
         }
         console.log(s);
