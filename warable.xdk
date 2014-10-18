@@ -2,11 +2,12 @@
   "project": {
     "projectSettingsVersion": "1.1",
     "creationData": {
-      "type": "Internet of Things Creator",
+      "type": "Import",
       "projectTypeName": "com.intel.xdk.projecttype.iotapp",
-      "projectGuid": "191dff18-b74c-44b1-a592-7e48ce2f1630",
-      "lastModifiedDate": 1413621975471,
-      "creationDate": 1413621975442
+      "src": "",
+      "projectGuid": "623e5806-7a9b-4489-8323-e0fd06b7f865",
+      "lastModifiedDate": 1413624442314,
+      "creationDate": 1413624442289
     },
     "sourceDirectory": "",
     "cordovaPluginsDirectory": "plugins",
@@ -56,7 +57,7 @@
           "android-targetSdkVersion": "19"
         },
         "isActive_": true,
-        "appName_": "edisonhack",
+        "appName_": "warable",
         "appID_": "not.yet.specified",
         "appAccess_": "*",
         "icons_": [],
@@ -64,7 +65,7 @@
         "iosProvs_": [],
         "addlPermissions_": "",
         "excludedLibraries_": "",
-        "cordovaCLIVersion_": "3.3",
+        "cordovaCLIVersion_": "3.5",
         "appVersion_": "0.0.1",
         "appVersionCode_": "1",
         "crosswalkVersion_": "stable"
@@ -78,7 +79,7 @@
           "android-targetSdkVersion": "19"
         },
         "isActive_": true,
-        "appName_": "edisonhack",
+        "appName_": "warable",
         "appID_": "not.yet.specified",
         "appAccess_": "*",
         "icons_": [],
@@ -86,7 +87,7 @@
         "iosProvs_": [],
         "addlPermissions_": "",
         "excludedLibraries_": "",
-        "cordovaCLIVersion_": "3.3",
+        "cordovaCLIVersion_": "3.5",
         "appVersion_": "0.0.1",
         "appVersionCode_": "1",
         "crosswalkVersion_": "stable"
@@ -100,7 +101,7 @@
           "ios-configuration": "adhoc"
         },
         "isActive_": true,
-        "appName_": "edisonhack",
+        "appName_": "warable",
         "appID_": "not.yet.specified",
         "appAccess_": "*",
         "icons_": [],
@@ -108,7 +109,7 @@
         "iosProvs_": [],
         "addlPermissions_": "",
         "excludedLibraries_": "",
-        "cordovaCLIVersion_": "3.3",
+        "cordovaCLIVersion_": "3.5",
         "appVersion_": "0.0.1"
       },
       "Windows8": {
@@ -117,7 +118,7 @@
         "name_": "Windows8",
         "preferences_": {},
         "isActive_": true,
-        "appName_": "edisonhack",
+        "appName_": "warable",
         "appID_": "not.yet.specified",
         "appAccess_": "*",
         "icons_": [],
@@ -125,7 +126,7 @@
         "iosProvs_": [],
         "addlPermissions_": "",
         "excludedLibraries_": "",
-        "cordovaCLIVersion_": "3.3",
+        "cordovaCLIVersion_": "3.5",
         "appVersion_": "0.0.0.1"
       },
       "WindowsPhone8": {
@@ -134,7 +135,7 @@
         "name_": "WindowsPhone8",
         "preferences_": {},
         "isActive_": true,
-        "appName_": "edisonhack",
+        "appName_": "warable",
         "appID_": "not.yet.specified",
         "appAccess_": "*",
         "icons_": [],
@@ -142,7 +143,7 @@
         "iosProvs_": [],
         "addlPermissions_": "",
         "excludedLibraries_": "",
-        "cordovaCLIVersion_": "3.3",
+        "cordovaCLIVersion_": "3.5",
         "appVersion_": "0.0.0.1"
       }
     }
