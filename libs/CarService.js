@@ -105,6 +105,23 @@ CarService.prototype = {
                 }
         })(this));
     },
+	_fetchCarData2:function(callBack)
+    {
+        //console.log("getCarDara", this.carId);
+        opt = this._createRequesrtOptions();
+        request.post(opt, (function(self)
+            {
+                return function(error, response, body)
+                {
+                    if (!error && response.statusCode == 200) 
+                    {
+                        callBadk(body);
+                    } else {
+                       callBack(false);
+                    }
+                }
+        })(this));
+    },
     //
     _createRequesrtOptions:function()
     {

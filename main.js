@@ -43,6 +43,12 @@ http.createServer(function (req, res) {
 			}
 			res.end('/Read\n');
 			break;
+		case '/cars':
+			var car = new CarService(80);
+			car._fetchCarData2(function(val){
+				res.end(val);
+			})
+			break;
 		default:
 			res.end('empty\n');
 	}
