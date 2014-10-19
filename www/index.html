@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TEST</title>
+    <script src="./js/socket.io.js"></script>
+</head>
+<body>
+<audio id="audio" controls autoplay></audio>
+<script>
+    var opt = {
+        forceNew: true,
+        reconnection: false
+    }
+    var socket = io.connect(":8100", opt);
+    socket.on('connect', function(e){
+        console.log('connect');
+    });
+    socket.on('connect', function(e){
+        console.log('connect');
+    });
+    socket.on('play', function(e){
+        console.log(e);
+        /*
+        var audio = new Audio(e.path);
+        audio.onload = function(e){
+            console.log("success", e);
+            audio.play();
+        };
+        audio.onerror = function(e){
+            console.log("error", e);
+        };
+        */
+        var player = document.getElementById("audio");
+        player.src = e.path;
+        player.onload = function(e){
+            console.log("success", e);
+            player.play();
+        };
+        player.onerror = function(e){
+            console.log("error", e);
+        };
+        player.load();
+
+    });
+</script>
+</body>
+</html>
