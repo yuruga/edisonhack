@@ -15,6 +15,8 @@ var REQ_VEHICLE_PROPS = "[Posn,VehBehvr,VehCdn]"
 
 var FRIEND_IP = "http://192.168.43.45:8080"
 
+var ENABLED_CARS = ["ITCJP_VID_001","ITCJP_VID_003","ITCJP_VID_005","ITCJP_VID_006","ITCJP_VID_007","ITCJP_VID_010","ITCJP_VID_012","ITCJP_VID_015","ITCJP_VID_017","ITCJP_VID_020","ITCJP_VID_021","ITCJP_VID_025","ITCJP_VID_030","ITCJP_VID_031","ITCJP_VID_032"];
+
 
 var CarService = function(searchRadius, monitoringRate){
 	//インスタンスプロパティ
@@ -26,14 +28,20 @@ var CarService = function(searchRadius, monitoringRate){
     
     
     //set dummy
-//    if(os.hostname() == "Edison-MAEDA")
-//    {
+    if(os.hostname() == "Edison-ICHIKAWA")
+    {
+        this.isHost = true;
         this.setCarId(7);
         //dummyid = "ITCJP_VID_017";
-//    }
+    }
+    //this.setCarId(7);
+    
     //イベントプール
     this.events = [];
-    this._fetchCarData();
+    if(this.isHost)
+    {
+        this._fetchCarData();
+    }
 }
 //クラスプロパティ
 
@@ -82,7 +90,7 @@ CarService.prototype = {
                         {
                             
                             if(myCarData){
-                                self._checkMyCarSituation(myCarData["data"][0]);
+                                self._checkMyCarSituation(myCarData["data"]);
                             }
                             nearbyCars = body["vehicleinfo"].slice(1);
                             self._checkNearbyCarsSitualtion(nearbyCars);
@@ -101,8 +109,8 @@ CarService.prototype = {
     _createRequesrtOptions:function()
     {
        en = getDateString(0);
-       st = getDateString(30);
-       params = {developerkey: API_KEY, responseformat:"json",vid:this.carId,radius:this.searchRadius,infoids:REQ_VEHICLE_PROPS, searchstart:en,searchend:en};
+       st = getDateString(1);
+       params = {developerkey: API_KEY, responseformat:"json",vid:this.carId,radius:this.searchRadius,infoids:REQ_VEHICLE_PROPS, searchstart:st,searchend:en};
        return {uri: END_POINT+GET_VEHCLE_INFO,form: params,json: true};
     },
     //監視開始
@@ -113,7 +121,7 @@ CarService.prototype = {
             {
                 self._fetchCarData();//.apply(self);
             }
-        })(this);
+        })(this)
         this.cancelId = setInterval(func, duration);
     },
     //監視停止
@@ -133,8 +141,10 @@ CarService.prototype = {
         check functions
     --*/
     //my car
-    _checkMyCarSituation:function(newSituation)
+    _checkMyCarSituation:function(data)
     {
+        //console.log("datalength" ,data.length)
+        newSituation = data[0];
         if(!this.myCarSituation)
         {
             this.myCarSituation = newSituation;
@@ -166,6 +176,16 @@ CarService.prototype = {
             v.setText(t);
             this.event=new CarEvent(v);
         }
+        if(data.length >1)
+        {
+            pos = newSituation["Posn"];
+            p1 = [pos.lat, pos.lon];
+            oldPos = data[1]["Posn"];
+            p2 = [oldPos.lat,oldPos.lon];
+            v = getVec(p1, p2);
+            this.currentVec = v;
+            //console.log("vector",v);
+        }
         
         this.myCarSituation = newSituation;
     },
@@ -174,14 +194,14 @@ CarService.prototype = {
     _checkNearbyCarsSitualtion:function(nearbyCars)
     {
         s = "";
-        newNearByCars = []
+        newNearByCars = {}//[]
         for(var i in nearbyCars)
         {
             car = nearbyCars[i]
             isNew = true;
-            for (var j in this.nearbyCars)
+            for (var vid in this.nearbyCars)
             {
-                vid = this.nearbyCars[j]
+                //vid = this.nearbyCars[j]
                 if(car.vid == vid )
                 {
                     isNew = false;
@@ -191,18 +211,32 @@ CarService.prototype = {
             if(isNew)
             {
                 targetId = car.vid;
-                targetName = new CarModel(targetId).name;//CarModel.createDummyModel(car.vid).name;
-                metCount = this.carModel.getMetCount(targetId);
-                t = this.textProvider.getGreeting(targetName, metCount).build();
-                //console.log( "entered : "+targetId + "count : "+metCount);
-                v = this.carModel.voice;
-                v.setText(t)
-                this.event=new CarEvent(v,FRIEND_IP+"/read");
-                this.carModel.addMetCount(targetId);
+                console.log("aaaaaaaaaaaaaaaaaaa",targetId, "   :  ",ENABLED_CARS.indexOf(targetId));
+                if(ENABLED_CARS.indexOf(targetId) != -1)
+                {
+                    targetName = new CarModel(targetId).name;//CarModel.createDummyModel(car.vid).name;
+                    metCount = this.carModel.getMetCount(targetId);
+                    t = this.textProvider.getGreeting(targetName, metCount).build();
+                    //console.log( "entered : "+targetId + "count : "+metCount);
+                    v = this.carModel.voice;
+                    v.setText(t)
+                    this.event=new CarEvent(v,FRIEND_IP+"/read");
+                    this.carModel.addMetCount(targetId);
+                }
                 
-                //対向車
-                console.log(car.data[0]["Posn"]);
-                console.log(car.data[0]["HdLampLtgIndcn"]);
+                //対
+                if(car.data.length >1)
+                {
+                    
+                    pos = car.data[0]["Posn"];
+                    
+                    p1 = [pos.lat, pos.lon];
+                    oldPos = car.data[1]["Posn"];
+                    p2 = [oldPos.lat,oldPos.lon];
+                    //console.log(p1,p2);
+                    v = getVec(p1, p2)
+                    //console.log("vec", v)
+                }
                 
                 //if(car["Posn"])
                 
@@ -216,18 +250,18 @@ CarService.prototype = {
                 //ライトついてる
                 
             }
-            newNearByCars.push(car.vid);
+            newNearByCars[car.vid] = car.data[0];//.push(car.vid);
             s+=car.vid+", ";
         }
         
-        for (var k in this.nearbyCars)
+        for (var oldVid in this.nearbyCars)
         {
             
             leaved = true;
-            oldVid = this.nearbyCars[k];
+            //oldVid = this.nearbyCars[k];
             for (var l in newNearByCars)
             {
-                if(oldVid == newNearByCars[l])
+                if(oldVid == l)//newNearByCars[l])
                 {
                     leaved = false;
                     break;
@@ -235,14 +269,18 @@ CarService.prototype = {
             }
             if(leaved == true)
             {
-                targetVid = oldVid;
-                targetName = new CarModel(targetVid).name;//.createDummyModel(targetVid).name;
-                t = this.textProvider.getTextWithName("TARGET_NAME", targetName).getText("GOOD_BYE").build();
                 
-                //console.log( "leaved : "+oldVid);
-                v = this.carModel.voice;
-                v.setText(t);
-                this.event = new CarEvent(v,FRIEND_IP+"/read");
+                targetVid = oldVid;
+                if(ENABLED_CARS.indexOf(targetId) != -1)
+                {
+                    targetName = new CarModel(targetVid).name;//.createDummyModel(targetVid).name;
+                    t = this.textProvider.getTextWithName("TARGET_NAME", targetName).getText("GOOD_BYE").build();
+
+                    //console.log( "leaved : "+oldVid);
+                    v = this.carModel.voice;
+                    v.setText(t);
+                    this.event = new CarEvent(v,FRIEND_IP+"/read");
+                }
             }
         }
         //console.log(s);
@@ -281,6 +319,23 @@ function getDateString(offset)
     if (mm < 10) { mm = "0" + mm; }
     if (ss < 10) { ss = "0" + ss; }
     return (YYYY + "-" + MM + "-" + DD + " "+hh+":"+mm+":"+ss);
+}
+
+function normalizeVec(x, y)
+{
+    l = Math.sqrt(x*x+y*y);
+    return [x/l, y/l]
+}
+function subtractLength(nv1,nv2)
+{
+    x = nv1[0]-nv2[0];
+    y = nv1[1]-nv2[1];
+    return Math.sqrt(x*x+y*y);
+}
+function getVec(p1,p2)
+{
+    
+    return [p1[0]-p2[0],p1[1]-p2[1]];
 }
 
 module.exports = CarService;

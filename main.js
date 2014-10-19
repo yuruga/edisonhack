@@ -15,6 +15,7 @@ var Voice = require("./libs/VoiceService.js");
 var Player = require("./libs/WavPlayer.js");
 var CarService = require('./libs/CarService');
 var WavSocket = require('./libs/WavSocket.js');
+var os = require("os");
 
 /**
  * WavSocket
@@ -87,7 +88,7 @@ function loop() {
  }else{
   is_press = false;
  }
-if(car.event){
+if(car.event && os.hostname() == "Edison-ICHIKAWA"){
 	//car.event.excute();
 	console.log("EVENT!");
 	led_bool = true;
