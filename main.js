@@ -12,13 +12,13 @@ var Settings = {
 var http = require('http');
 var mraa = require('mraa');
 var Voice = require("./libs/VoiceService.js");
-var Player = require("./libs/WavPlayer.js");
+//var Player = require("./libs/WavPlayer.js");
 var CarService = require('./libs/CarService')
 
 /**
  * main
  */
-/*
+
 //pin指定
 var pin6 = new mraa.Gpio(6);
 var car = new CarService(80);
@@ -53,7 +53,7 @@ if(car.event){
 }
 //初回実行
 loop();
-*/
+
 
 
 /**
@@ -70,8 +70,8 @@ http.createServer(function (req, res) {
 				v.getAndWriteData("/tmp/read_" + (new Date()).getTime().toString() + ".wav", function(path){
 					console.log(path);
 					//TODO: Read
-					var player = new Player(path);
-					player.play();
+					/*var player = new Player(path);
+					player.play();*/
 				});
 			}
 			res.end('/Read\n');
