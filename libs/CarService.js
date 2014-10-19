@@ -200,7 +200,8 @@ CarService.prototype = {
                 
                 //対向車
                 console.log(car.data[0]["Posn"]);
-                console.log(car.data[0]["HdLampLtgIndcn"])
+                console.log(car.data[0]["HdLampLtgIndcn"]);
+                
                 //if(car["Posn"])
                 
                 //天気が違う
@@ -210,7 +211,7 @@ CarService.prototype = {
                 if(car["HdLampLtgIndcn"] != 0)
                 {
                 }
-                    //ライトついてる
+                //ライトついてる
                 
             }
             newNearByCars.push(car.vid);
