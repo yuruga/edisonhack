@@ -28,7 +28,8 @@ var CarService = function(searchRadius, monitoringRate){
     
     
     //set dummy
-    if(os.hostname() == "Edison-MAEDA")
+    //if(os.hostname() == "Edison-MAEDA")
+    if(os.hostname() == "Edison-ICHIKAWA")
     {
         this.isHost = true;
         this.setCarId(7);
