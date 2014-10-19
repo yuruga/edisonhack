@@ -28,7 +28,6 @@ var CarService = function(searchRadius, monitoringRate){
     
     
     //set dummy
-    //if(os.hostname() == "Edison-MAEDA")
     if(os.hostname() == "Edison-ICHIKAWA")
     {
         this.isHost = true;
@@ -74,10 +73,12 @@ CarService.prototype = {
     {
         //console.log("getCarDara", this.carId);
         opt = this._createRequesrtOptions();
+		console.log(opt);
         request.post(opt, (function(self)
             {
                 return function(error, response, body)
-                {          
+                {
+					console.log(response.statusCode, body);
                     if (!error && response.statusCode == 200) 
                     {
                         self.fetchCount ++;
