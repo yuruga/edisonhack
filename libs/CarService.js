@@ -26,11 +26,11 @@ var CarService = function(searchRadius, monitoringRate){
     
     
     //set dummy
-    if(os.hostname() == "Edison-MAEDA")
-    {
+//    if(os.hostname() == "Edison-MAEDA")
+//    {
         this.setCarId(7);
         //dummyid = "ITCJP_VID_017";
-    }
+//    }
     //イベントプール
     this.events = [];
     this._fetchCarData();
@@ -65,10 +65,12 @@ CarService.prototype = {
     {
         //console.log("getCarDara", this.carId);
         opt = this._createRequesrtOptions();
+		console.log(opt);
         request.post(opt, (function(self)
             {
                 return function(error, response, body)
-                {          
+                {
+					console.log(response.statusCode, body);
                     if (!error && response.statusCode == 200) 
                     {
                         self.fetchCount ++;
@@ -200,7 +202,8 @@ CarService.prototype = {
                 
                 //対向車
                 console.log(car.data[0]["Posn"]);
-                console.log(car.data[0]["HdLampLtgIndcn"])
+                console.log(car.data[0]["HdLampLtgIndcn"]);
+                
                 //if(car["Posn"])
                 
                 //天気が違う
@@ -210,7 +213,7 @@ CarService.prototype = {
                 if(car["HdLampLtgIndcn"] != 0)
                 {
                 }
-                    //ライトついてる
+                //ライトついてる
                 
             }
             newNearByCars.push(car.vid);
