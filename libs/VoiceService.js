@@ -80,7 +80,7 @@ VoiceService.prototype = {
 		this.volume = Math.max(Math.min(val, 200), 50);
 	},
 	_inValue: function(val, obj){
-		for(var i in obje){
+		for(var i in obj){
 			if(obj[i] === val){
 				return true;
 			}
