@@ -13,28 +13,27 @@ var API_KEY = "b47103a63f4c";
 //リクエスト対象のプロパティー
 var REQ_VEHICLE_PROPS = "[VehBehvr,VehCdn]"
 
-var FRIEND_IP = "http://192.168.50.37:8080"
+var FRIEND_IP = "http://192.168.43.45:8080"
 
 
 var CarService = function(searchRadius, monitoringRate){
 	//インスタンスプロパティ
-    this.setCarId(1);
-    this.startMonitor(monitoringRate || 3*1000);
+    //this.setCarId(1);
+    //this.startMonitor(monitoringRate || 3*1000);
     this.searchRadius = searchRadius || 300;
+    this.monitoringRate = monitoringRate || 3*1000;
+    this.fetchCount = 0;
     
     
     //set dummy
     if(os.hostname() == "Edison-MAEDA")
     {
-        dummyid = "ITCJP_VID_020";
+        this.setCarId(7);
+        //dummyid = "ITCJP_VID_017";
     }
-    //車プロフィール
-    
-    this.carModel = new CarModel(dummyid);
-    this.textProvider = new TextProvider(this.carModel.name, this.carModel.sex);
-    
     //イベントプール
     this.events = [];
+    this._fetchCarData();
 }
 //クラスプロパティ
 
@@ -53,6 +52,14 @@ CarService.prototype = {
         this.carId = "ITCJP_VID_"+ToDigit(idNum, 3);
         //console.log(this.carId);
     },
+    _onReady:function(carspec)
+    {
+        //車プロフィール
+        console.log();
+        this.carModel = new CarModel(carspec["vid"]);
+        this.textProvider = new TextProvider(this.carModel.name, this.carModel.sex);
+        this.startMonitor(this.monitoringRate);
+    },
     //カーデータフェッチ
     _fetchCarData:function()
     {
@@ -64,18 +71,20 @@ CarService.prototype = {
                 {          
                     if (!error && response.statusCode == 200) 
                     {
-                        //eco = body["vehicleinfo"][0]["data"][0]["EcoDrvgSts"];
-                        //console.log("success",body["vehicleinfo"]);
-                        //console.log("ssss", self)
-                       
+                        self.fetchCount ++;
                         myCarData = body["vehicleinfo"][0];
-                        if(myCarData){
-                            self._checkMyCarSituation(myCarData["data"][0]);
+                        if(self.fetchCount == 1)
+                        {
+                            self._onReady(myCarData);
+                        }else
+                        {
+                            
+                            if(myCarData){
+                                self._checkMyCarSituation(myCarData["data"][0]);
+                            }
+                            nearbyCars = body["vehicleinfo"].slice(1);
+                            self._checkNearbyCarsSitualtion(nearbyCars);
                         }
-                        nearbyCars = body["vehicleinfo"].slice(1);
-                        self._checkNearbyCarsSitualtion(nearbyCars);
-                        
-                       
                     } else {
                         console.log('error: '+ response.statusCode);
                     }
@@ -130,8 +139,28 @@ CarService.prototype = {
         if(this.myCarSituation["SysPwrSts"] != 2 && newSituation["SysPwrSts"] == 2)//if(newSituation["SysPwrSts"] == 2)
         {
             t = this.textProvider.greeting().selfIntro().build();
-            this.event=new CarEvent(t);
+            v = this.carModel.voice;
+            v.setText(t);
+            this.event=new CarEvent(v);
         }
+        
+        //check accelaration
+        console.log(newSituation["ALgt"]);
+        if(newSituation["ALgt"] > 0.7)
+        {
+            t = this.textProvider.getText("HARD_ACCEL").build();
+            v = this.carModel.voice;
+            v.setText(t);
+            this.event=new CarEvent(v);
+        }
+        if(newSituation["ALgt"] < -0.7)
+        {
+            t = t = this.textProvider.getText("HARD_BRAKE").build();
+            v = this.carModel.voice;
+            v.setText(t);
+            this.event=new CarEvent(v);
+        }
+        
         this.myCarSituation = newSituation;
     },
     
@@ -159,8 +188,10 @@ CarService.prototype = {
                 targetName = new CarModel(targetId).name;//CarModel.createDummyModel(car.vid).name;
                 metCount = this.carModel.getMetCount(targetId);
                 t = this.textProvider.getGreeting(targetName, metCount).build();
-                console.log( "entered : "+targetId + "count : "+metCount);
-                this.event=new CarEvent(t,FRIEND_IP+"/read");
+                //console.log( "entered : "+targetId + "count : "+metCount);
+                v = this.carModel.voice;
+                v.setText(t)
+                this.event=new CarEvent(v,FRIEND_IP+"/read");
                 this.carModel.addMetCount(targetId);
             }
             newNearByCars.push(car.vid);
@@ -186,19 +217,17 @@ CarService.prototype = {
                 targetName = new CarModel(targetVid).name;//.createDummyModel(targetVid).name;
                 t = this.textProvider.getTextWithName("TARGET_NAME", targetName).getText("GOOD_BYE").build();
                 
-                console.log( "leaved : "+oldVid);
-                this.event = new CarEvent(t,FRIEND_IP+"/read");
+                //console.log( "leaved : "+oldVid);
+                v = this.carModel.voice;
+                v.setText(t);
+                this.event = new CarEvent(v,FRIEND_IP+"/read");
             }
         }
-        console.log(s);
+        //console.log(s);
         this.nearbyCars = newNearByCars;
         
     }
 };
-
-
-
-
 
 
 

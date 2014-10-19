@@ -9,7 +9,9 @@ var TextData = {
     GOOD_BYE:["バイバイー。","ごきげんよう。"],
     TARGET_NAME:["{{targetname}}さん、"],
     NICE_TO_MEET_YOU:["はじめましてー。"],
-    HELLO_AGAIN:["また会ったねー"]
+    HELLO_AGAIN:["また会ったねー"],
+    HARD_ACCEL:["ひゃっほーい","きゃー、こわいよー"],
+    HARD_BRAKE:["おっとっとっと。"]
 }
 
 //コンストラクタ

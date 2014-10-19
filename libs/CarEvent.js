@@ -1,10 +1,11 @@
-var voice = require("./VoiceService");
+//var voice = require("./VoiceService");
 var request = require('request');
 //コンストラクタ
-var CarEvent = function(text, interactionUrl){
+var CarEvent = function(voice, interactionUrl){
 	//インスタンスプロパティ
-	this.text = text || "ほげ";
+	//this.text = text || "ほげ";
     this.interactionUrl = interactionUrl || null;
+    this.voice = voice;
 }
 //クラスプロパティ
 CarEvent.sample_class_prop = "value";
@@ -15,12 +16,12 @@ CarEvent.sampleClassFunc = function(){
 //インスタンスメソッド
 CarEvent.prototype = {
 	excute: function(){
-        console.log(this.text);
+        console.log(this.voice.text, this.voice.speaker);
 	   //TODO call get Audio Servive with text.
        
-        v = new voice();
-        v.setText(this.text);
-        v.getAndWriteData("/tmp/read_" + (new Date()).getTime().toString() + ".wav", function(path){
+        //v = new voice();
+        //v.setText(this.text);
+        this.voice.getAndWriteData("/tmp/read_" + (new Date()).getTime().toString() + ".wav", function(path){
             console.log("localread:"+path);
             //TODO: Read
         });
@@ -28,7 +29,7 @@ CarEvent.prototype = {
         //TODO if interactionUrl is specified, call it.
         if(this.interactionUrl)
         {
-            props = { w:this.text };
+            props = { w:this.voice.text };
             opt = {
               url: this.interactionUrl,
               qs: props
@@ -42,6 +43,8 @@ CarEvent.prototype = {
                 }
             });
         }
+        //
+        this.voice = null;
 	}
 };
 
