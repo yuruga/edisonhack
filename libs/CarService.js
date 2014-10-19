@@ -11,7 +11,7 @@ var GET_VEHCLE_INFO = "GetVehicleInfo";
 var API_KEY = "b47103a63f4c";
 
 //リクエスト対象のプロパティー
-var REQ_VEHICLE_PROPS = "[VehBehvr,VehCdn]"
+var REQ_VEHICLE_PROPS = "[Posn,VehBehvr,VehCdn]"
 
 var FRIEND_IP = "http://192.168.43.45:8080"
 
@@ -86,7 +86,11 @@ CarService.prototype = {
                             self._checkNearbyCarsSitualtion(nearbyCars);
                         }
                     } else {
-                        console.log('error: '+ response.statusCode);
+                        for(var e in response)
+                        {
+                            //console.log(e);
+                        }
+                        console.log('error: '+ error);
                     }
                 }
         })(this));
@@ -145,7 +149,7 @@ CarService.prototype = {
         }
         
         //check accelaration
-        console.log(newSituation["ALgt"]);
+        //console.log(newSituation["ALgt"]);
         if(newSituation["ALgt"] > 0.7)
         {
             t = this.textProvider.getText("HARD_ACCEL").build();
@@ -193,6 +197,21 @@ CarService.prototype = {
                 v.setText(t)
                 this.event=new CarEvent(v,FRIEND_IP+"/read");
                 this.carModel.addMetCount(targetId);
+                
+                //対向車
+                console.log(car.data[0]["Posn"]);
+                console.log(car.data[0]["HdLampLtgIndcn"])
+                //if(car["Posn"])
+                
+                //天気が違う
+                
+                //ヘッドライト点きっぱなしだよ
+                
+                if(car["HdLampLtgIndcn"] != 0)
+                {
+                }
+                    //ライトついてる
+                
             }
             newNearByCars.push(car.vid);
             s+=car.vid+", ";
